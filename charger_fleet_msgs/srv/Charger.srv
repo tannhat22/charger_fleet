@@ -1,0 +1,8 @@
+uint8 MODE_IDLE=0
+uint8 MODE_CHARGE=1
+uint8 MODE_UNCHARGE=2
+
+int32 mode
+---
+bool success
+string message
