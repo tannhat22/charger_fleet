@@ -27,7 +27,7 @@ void ClientConfig::print_config() const
   printf("  dds domain: %d\n", dds_domain);
   printf("  TOPICS\n");
   printf("    charger state: %s\n", dds_state_topic.c_str());
-  printf("    mode request: %s\n", dds_mode_request_topic.c_str());
+  printf("    charger request: %s\n", dds_charger_request_topic.c_str());
 }
 
 } // namespace charger_fleet

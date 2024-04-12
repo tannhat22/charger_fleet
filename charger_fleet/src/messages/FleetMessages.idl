@@ -1,38 +1,37 @@
 module ChargerFleetData
 {
-  module ChargeMode_Constants
+  module ChargerMode_Constants
   {
     const unsigned long MODE_CHARGE = 1;
     const unsigned long MODE_UNCHARGE = 2;
   };
-  module ChargerMode_Constants
+  module ChargerState_Constants
   {
-    const unsigned long MODE_IDLE = 0;
-    const unsigned long MODE_CHARGING = 1;
-    const unsigned long MODE_CHARGEFULL = 2;
-    const unsigned long MODE_ERROR = 3;
-    const unsigned long MODE_REQUEST_ERROR = 4;
-  };
-  struct ChargeMode
-  {
-    unsigned long mode;
+    const unsigned long CHARGER_IDLE = 1;
+    const unsigned long CHARGER_ASSIGNED = 2;
+    const unsigned long CHARGER_CHARGING = 3;
+    const unsigned long CHARGER_RELEASED = 4;
+    const unsigned long CHARGER_ERROR = 200;
   };
   struct ChargerMode
   {
     unsigned long mode;
   };
+  struct ChargerRequest
+  {
+    string charger_name;
+    string fleet_name;
+    string robot_name;
+    string request_id;
+    ChargerMode charger_mode;
+  };
   struct ChargerState
   {
-    string name;
-    string model;
-    string task_id;
-    ChargerMode mode;
-  };
-  struct ModeRequest
-  {
-    string fleet_name;
+    unsigned long state;
     string charger_name;
-    ChargeMode mode;
-    string task_id;
+    string error_message;
+    string request_id;
+    string fleet_name;
+    string robot_name;
   };
 };

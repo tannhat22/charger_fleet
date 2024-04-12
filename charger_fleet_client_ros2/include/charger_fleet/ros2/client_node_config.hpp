@@ -32,16 +32,15 @@ namespace ros2
 struct ClientNodeConfig
 {
 
-  std::string fleet_name = "fleet_name";
   std::string charger_name = "charger_name";
-  std::string charger_model = "charger_model";
+  std::string fleet_name = "fleet_name";
 
-  std::string charger_mode_topic = "/charger_mode";
-  std::string charging_trigger_server_name = "charger_work";
+  std::string charger_state_topic = "/charger_state";
+  std::string charging_trigger_server_name = "charger_server";
 
   int dds_domain = 52;
   std::string dds_state_topic = "charger_state";
-  std::string dds_mode_request_topic = "mode_charger_request";
+  std::string dds_charger_request_topic = "charger_charger_request";
 
   double wait_timeout = 10.0;
   double update_frequency = 10.0;

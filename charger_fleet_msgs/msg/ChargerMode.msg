@@ -1,8 +1,4 @@
-uint32 mode
-uint32 MODE_IDLE=0
-uint32 MODE_CHARGING=1
-uint32 MODE_CHARGEFULL=2
-uint32 MODE_ERROR=3
-uint32 MODE_REQUEST_ERROR=4
+uint32 MODE_CHARGE=1
+uint32 MODE_UNCHARGE=2
 
-uint64 mode_request_id
+uint32 mode

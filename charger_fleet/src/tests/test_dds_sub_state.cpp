@@ -79,23 +79,24 @@ int main(int argc, char** argv)
       /* Print Message. */
       msg = (ChargerFleetData_ChargerState*)samples[0];
       std::cout << "=== [Subscriber] Received : " << std::endl;
-      std::cout << "name:    " << msg->name << std::endl;
-      std::cout << "model:   " << msg->model << std::endl;
-      std::string task_id(msg->task_id);
-      std::cout << "task_id: " << task_id << std::endl;
-      std::cout << "mode: ";
-      if (msg->mode.mode == ChargerFleetData_ChargerMode_Constants_MODE_IDLE)
+      std::cout << "charger_name: " << msg->charger_name << std::endl;
+      std::cout << "error_message: " << msg->error_message << std::endl;
+      std::string request_id(msg->request_id);
+      std::cout << "request_id: " << request_id << std::endl;
+      std::cout << "fleet_name: " << msg->fleet_name << std::endl;
+      std::cout << "robot_name: " << msg->robot_name << std::endl;
+      
+      std::cout << "state: ";
+      if (msg->state == ChargerFleetData_ChargerState_Constants_CHARGER_IDLE)
         std::cout << "IDLE" << std::endl;
-      else if (
-          msg->mode.mode == ChargerFleetData_ChargerMode_Constants_MODE_CHARGING)
+      else if (msg->state == ChargerFleetData_ChargerState_Constants_CHARGER_ASSIGNED)
+        std::cout << "ASSIGNED" << std::endl;
+      else if (msg->state == ChargerFleetData_ChargerState_Constants_CHARGER_CHARGING)
         std::cout << "CHARGING" << std::endl;
-      else if (msg->mode.mode == ChargerFleetData_ChargerMode_Constants_MODE_CHARGEFULL)
-        std::cout << "CHARGEFULL" << std::endl;
-      else if (msg->mode.mode == ChargerFleetData_ChargerMode_Constants_MODE_ERROR)
+      else if (msg->state == ChargerFleetData_ChargerState_Constants_CHARGER_RELEASED)
+        std::cout << "RELEASED" << std::endl;
+      else if (msg->state == ChargerFleetData_ChargerState_Constants_CHARGER_ERROR)
         std::cout << "ERROR" << std::endl;
-      else if (
-          msg->mode.mode == ChargerFleetData_ChargerMode_Constants_MODE_REQUEST_ERROR)
-        std::cout << "REQUEST ERROR" << std::endl;
       //break;
     }
     else

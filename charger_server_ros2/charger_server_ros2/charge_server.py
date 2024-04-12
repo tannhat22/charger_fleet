@@ -4,7 +4,7 @@ import rclpy
 from rclpy.node import Node
 
 from charger_fleet_msgs.srv import Charger
-from charger_fleet_msgs.msg import ChargerMode
+from charger_fleet_msgs.msg import ChargerState
 
 class ChargerService(Node):
     def __init__(self):
@@ -42,10 +42,10 @@ class ChargerService(Node):
         self.process_state_reg = ['DM',2000,'.U',1]
 
         # Services server:
-        self.srv = self.create_service(Charger, "charger_work", self.charger_callback)
+        self.srv = self.create_service(Charger, "charger_server", self.charger_callback)
 
         # Publishers:
-        self.chargerModePub = self.create_publisher(ChargerMode, "/charger_mode", 10)
+        self.chargerModePub = self.create_publisher(ChargerState, "/charger_state", 10)
 
         timer_period = 1 / self.frequency
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -202,8 +202,18 @@ class ChargerService(Node):
                                      self.charger_state_reg[2],
                                      self.charger_state_reg[3])[0]
         
-        msg = ChargerMode()
-        msg.mode = stateData
+        msg = ChargerState()
+        msg.state = stateData
+        if stateData == 200:
+            msg.state = 200
+            msg.error_message = "Motor error"
+        elif stateData == 201:
+            msg.state = 200
+            msg.error_message = "Sensor detect robot no response"
+        elif stateData == 202:
+            msg.state = 200
+            msg.error_message = "Charger can't trigger "
+
         self.chargerModePub.publish(msg)
 
 

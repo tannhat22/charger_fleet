@@ -15,22 +15,25 @@
  *
  */
 
-#ifndef CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGEMODE_HPP
-#define CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGEMODE_HPP
+#ifndef CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGERREQUEST_HPP
+#define CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGERREQUEST_HPP
 
-#include <cstdint>
+#include <string>
+#include "ChargerMode.hpp"
 
 namespace charger_fleet {
 namespace messages {
 
-struct ChargeMode
+struct ChargerRequest
 {
-  uint32_t mode;
-  static const uint32_t MODE_CHARGE = 1;
-  static const uint32_t MODE_UNCHARGE = 2;
+  std::string charger_name;
+  std::string fleet_name;
+  std::string robot_name;
+  std::string request_id;
+  ChargerMode charger_mode;
 };
 
 } // namespace messages
 } // namespace charger_fleet
 
-#endif // CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGEMODE_HPP
+#endif // CHARGER_FLEET__INCLUDE__CHARGER_FLEET__MESSAGES__CHARGERREQUEST_HPP

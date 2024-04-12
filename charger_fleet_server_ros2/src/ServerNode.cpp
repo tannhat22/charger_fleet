@@ -22,7 +22,7 @@
 #include <charger_fleet/Server.hpp>
 #include <charger_fleet/ServerConfig.hpp>
 
-#include <charger_fleet/messages/ModeRequest.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 
 #include "utilities.hpp"
 #include "ServerNode.hpp"
@@ -97,14 +97,10 @@ void ServerNode::setup_config()
 {
   get_parameter("fleet_name", server_node_config.fleet_name);
   get_parameter("fleet_charger_state_topic", server_node_config.fleet_state_topic);
-  get_parameter("mode_request_topic", server_node_config.mode_request_topic);
-  // get_parameter("charge_request_topic", server_node_config.charge_request_topic);
-  // get_parameter("cancel_request_topic", server_node_config.cancel_request_topic);
+  get_parameter("charger_request_topic", server_node_config.charger_request_topic);
   get_parameter("dds_domain", server_node_config.dds_domain);
   get_parameter("dds_charger_state_topic", server_node_config.dds_charger_state_topic);
-  get_parameter("dds_mode_request_topic", server_node_config.dds_mode_request_topic);
-  // get_parameter("dds_charge_request_topic", server_node_config.dds_charge_request_topic);
-  // get_parameter("dds_cancel_request_topic", server_node_config.dds_cancel_request_topic);
+  get_parameter("dds_charger_request_topic", server_node_config.dds_charger_request_topic);
   get_parameter("update_state_frequency", server_node_config.update_state_frequency);
   get_parameter("publish_state_frequency", server_node_config.publish_state_frequency);
 }
@@ -157,17 +153,17 @@ void ServerNode::start(Fields _fields)
   // --------------------------------------------------------------------------
   // Mode request handling
 
-  auto mode_request_sub_opt = rclcpp::SubscriptionOptions();
+  auto charger_request_sub_opt = rclcpp::SubscriptionOptions();
 
-  mode_request_sub_opt.callback_group = fleet_state_pub_callback_group;
+  charger_request_sub_opt.callback_group = fleet_state_pub_callback_group;
 
-  mode_request_sub = create_subscription<charger_fleet_msgs::msg::ModeRequest>(
-      server_node_config.mode_request_topic, rclcpp::QoS(10),
-      [&](charger_fleet_msgs::msg::ModeRequest::UniquePtr msg)
+  charger_request_sub = create_subscription<charger_fleet_msgs::msg::ChargerRequest>(
+      server_node_config.charger_request_topic, rclcpp::QoS(10),
+      [&](charger_fleet_msgs::msg::ChargerRequest::UniquePtr msg)
       {
-        handle_mode_request(std::move(msg));
+        handle_charger_request(std::move(msg));
       },
-      mode_request_sub_opt);
+      charger_request_sub_opt);
 }
 
 bool ServerNode::is_request_valid(
@@ -183,12 +179,12 @@ bool ServerNode::is_request_valid(
   return true;
 }
 
-void ServerNode::handle_mode_request(
-    charger_fleet_msgs::msg::ModeRequest::UniquePtr _msg)
+void ServerNode::handle_charger_request(
+    charger_fleet_msgs::msg::ChargerRequest::UniquePtr _msg)
 {
-  messages::ModeRequest cf_msg;
+  messages::ChargerRequest cf_msg;
   to_cf_message(*(_msg.get()), cf_msg);
-  fields.server->send_mode_request(cf_msg);
+  fields.server->send_charger_request(cf_msg);
 }
 
 void ServerNode::update_state_callback()
@@ -202,14 +198,14 @@ void ServerNode::update_state_callback()
     to_ros_message(cf_cs, ros_cs);
 
     WriteLock charger_states_lock(charger_states_mutex);
-    auto it = charger_states.find(ros_cs.name);
+    auto it = charger_states.find(ros_cs.charger_name);
     if (it == charger_states.end())
       RCLCPP_INFO(
           get_logger(),
           "registered a new charger: [%s]",
-          ros_cs.name.c_str());
+          ros_cs.charger_name.c_str());
 
-    charger_states[ros_cs.name] = ros_cs;
+    charger_states[ros_cs.charger_name] = ros_cs;
   }
 }
 
@@ -225,11 +221,12 @@ void ServerNode::publish_fleet_state()
     const auto fleet_frame_rs = it.second;
     charger_fleet_msgs::msg::ChargerState rmf_frame_cs;
 
-    rmf_frame_cs.name = fleet_frame_rs.name;
-    rmf_frame_cs.model = fleet_frame_rs.model;
-    rmf_frame_cs.task_id = fleet_frame_rs.task_id;
-    rmf_frame_cs.mode = fleet_frame_rs.mode;
-
+    rmf_frame_cs.state = fleet_frame_rs.state;
+    rmf_frame_cs.charger_name = fleet_frame_rs.charger_name;
+    rmf_frame_cs.error_message = fleet_frame_rs.error_message;
+    rmf_frame_cs.request_id = fleet_frame_rs.request_id;
+    rmf_frame_cs.fleet_name = fleet_frame_rs.fleet_name;
+    rmf_frame_cs.robot_name = fleet_frame_rs.robot_name;
     fleet_state.chargers.push_back(rmf_frame_cs);
   }
   fleet_state_pub->publish(fleet_state);

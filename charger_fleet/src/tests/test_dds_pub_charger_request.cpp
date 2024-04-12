@@ -35,15 +35,16 @@ int main (int argc, char ** argv)
     return 1;
   }
 
-  std::string fleet_name(argv[1]);
-  std::string charger_name(argv[2]);
-  std::string task_id(argv[3]);
-  std::string mode_request(argv[4]);
+  std::string charger_name(argv[1]);
+  std::string fleet_name(argv[2]);
+  std::string robot_name(argv[3]);
+  std::string request_id(argv[4]);
+  std::string charger_request(argv[5]);
 
-  if (mode_request != "charge" && 
-      mode_request != "uncharge")
+  if (charger_request != "charge" && 
+      charger_request != "uncharge")
   {
-    std::cout << "Supported modes are charge and uncharge." << std::endl;
+    std::cout << "Supported chargers are charge and uncharge." << std::endl;
     return 1;
   }
 
@@ -52,8 +53,8 @@ int main (int argc, char ** argv)
   dds_entity_t writer;
   dds_return_t rc;
   dds_qos_t *qos;
-  ChargerFleetData_ModeRequest* msg;
-  msg = ChargerFleetData_ModeRequest__alloc();
+  ChargerFleetData_ChargerRequest* msg;
+  msg = ChargerFleetData_ChargerRequest__alloc();
   uint32_t status = 0;
   (void)argc;
   (void)argv;
@@ -65,7 +66,7 @@ int main (int argc, char ** argv)
 
   /* Create a Topic. */
   topic = dds_create_topic (
-    participant, &ChargerFleetData_ModeRequest_desc, "mode_request", 
+    participant, &ChargerFleetData_ChargerRequest_desc, "charger_request", 
     NULL, NULL);
   if (topic < 0)
     DDS_FATAL("dds_create_topic: %s\n", dds_strretcode(-topic));
@@ -96,17 +97,18 @@ int main (int argc, char ** argv)
   }
 
   /* Create a message to write. */
-  msg->fleet_name = charger_fleet::common::dds_string_alloc_and_copy(fleet_name);
   msg->charger_name = charger_fleet::common::dds_string_alloc_and_copy(charger_name);
-  msg->task_id = charger_fleet::common::dds_string_alloc_and_copy(task_id);
+  msg->fleet_name = charger_fleet::common::dds_string_alloc_and_copy(fleet_name);
+  msg->robot_name = charger_fleet::common::dds_string_alloc_and_copy(robot_name);
+  msg->request_id = charger_fleet::common::dds_string_alloc_and_copy(request_id);
 
-  if (mode_request == "charge")
-    msg->mode.mode = ChargerFleetData_ChargeMode_Constants_MODE_CHARGE;
-  else if (mode_request == "uncharge")
-    msg->mode.mode = ChargerFleetData_ChargeMode_Constants_MODE_UNCHARGE;
+  if (charger_request == "charge")
+    msg->charger_mode.mode = ChargerFleetData_ChargerMode_Constants_MODE_CHARGE;
+  else if (charger_request == "uncharge")
+    msg->charger_mode.mode = ChargerFleetData_ChargerMode_Constants_MODE_UNCHARGE;
   
   printf ("=== [Publisher]  Writing : ");
-  printf ("Message: mode_request %s\n", mode_request.c_str());
+  printf ("Message: charger_request %s\n", charger_request.c_str());
   fflush (stdout);
 
   rc = dds_write (writer, msg);
@@ -118,7 +120,7 @@ int main (int argc, char ** argv)
   if (rc != DDS_RETCODE_OK)
     DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
 
-  ChargerFleetData_ModeRequest_free(msg, DDS_FREE_ALL);
+  ChargerFleetData_ChargerRequest_free(msg, DDS_FREE_ALL);
 
   return EXIT_SUCCESS;
 }

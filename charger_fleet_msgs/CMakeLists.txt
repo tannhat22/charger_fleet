@@ -13,11 +13,10 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/ChargeMode.msg"
   "msg/ChargerMode.msg"
+  "msg/ChargerRequest.msg"
   "msg/ChargerState.msg"
   "msg/FleetChargerState.msg"
-  "msg/ModeRequest.msg"
   "srv/Charger.srv"
   DEPENDENCIES std_msgs # Add packages that above messages depend on
 )

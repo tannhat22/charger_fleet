@@ -27,12 +27,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <charger_fleet_msgs/srv/charger.hpp>
-#include <charger_fleet_msgs/msg/charger_mode.hpp>
+#include <charger_fleet_msgs/msg/charger_state.hpp>
 
 #include <charger_fleet/Client.hpp>
 #include <charger_fleet/ClientConfig.hpp>
 #include <charger_fleet/messages/ChargerState.hpp>
-#include <charger_fleet/messages/ModeRequest.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 
 #include <charger_fleet/Client.hpp>
 
@@ -69,10 +69,10 @@ private:
   // --------------------------------------------------------------------------
   // Chargermode handling
 
-  rclcpp::Subscription<charger_fleet_msgs::msg::ChargerMode>::SharedPtr  charger_mode_sub;
+  rclcpp::Subscription<charger_fleet_msgs::msg::ChargerState>::SharedPtr  charger_state_sub;
   Mutex charger_state_mutex;
-  charger_fleet_msgs::msg::ChargerMode current_charger_state;
-  void charger_state_callback_fn(const charger_fleet_msgs::msg::ChargerMode::SharedPtr msg);
+  charger_fleet_msgs::msg::ChargerState current_charger_state;
+  void charger_state_callback_fn(const charger_fleet_msgs::msg::ChargerState::SharedPtr msg);
 
   // --------------------------------------------------------------------------
   // Mode handling
@@ -82,18 +82,22 @@ private:
   // TODO: figure out a better way to handle multiple triggered modes
   std::atomic<bool> request_error;
 
-  messages::ChargerMode get_charger_mode();
-  bool read_mode_request();
+  messages::ChargerState get_charger_state();
+  bool read_charger_request();
 
-  // Task handling
+  // Request handling
 
   bool is_valid_request(
       const std::string& request_fleet_name,
       const std::string& request_charger_name,
-      const std::string& request_task_id);
+      const std::string& request_request_id);
 
-  Mutex task_id_mutex;
-  std::string current_task_id;
+  Mutex request_id_mutex;
+  std::string current_request_id;
+
+  Mutex request_robot_mutex;
+  std::string current_request_robot_name;
+
 
   void read_requests();
   void handle_requests();

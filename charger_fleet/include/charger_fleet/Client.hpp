@@ -23,7 +23,7 @@
 #include <charger_fleet/ClientConfig.hpp>
 
 #include <charger_fleet/messages/ChargerState.hpp>
-#include <charger_fleet/messages/ModeRequest.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 
 namespace charger_fleet {
 
@@ -51,15 +51,15 @@ public:
   ///   True if charger state was successfully sent, false otherwise.
   bool send_charger_state(const messages::ChargerState& new_charger_state);
 
-  /// Attempts to read and receive a new mode request from the charger fleet
+  /// Attempts to read and receive a new charger request from the charger fleet
   /// server, for commanding the charger client.
   ///
-  /// \param[out] mode_request
-  ///   Newly received charger mode request from the charger fleet server, to be
+  /// \param[out] charger_request
+  ///   Newly received charger charger request from the charger fleet server, to be
   ///   handled by the charger client.
   /// \return
-  ///   True if a new mode request was received, false otherwise.
-  bool read_mode_request(messages::ModeRequest& mode_request);
+  ///   True if a new charger request was received, false otherwise.
+  bool read_charger_request(messages::ChargerRequest& charger_request);
 
   /// Destructor
   ~Client();

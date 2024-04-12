@@ -35,12 +35,12 @@ void ServerNodeConfig::print_config() const
   printf("  publish state frequency: %.1f\n", publish_state_frequency);
   printf("  TOPICS\n");
   printf("    fleet state: %s\n", fleet_state_topic.c_str());
-  printf("    mode request: %s\n", mode_request_topic.c_str());
+  printf("    charger request: %s\n", charger_request_topic.c_str());
   printf("CHARGER SERVER-CLIENT DDS CONFIGURATION\n");
   printf("  dds domain: %d\n", dds_domain);
   printf("  TOPICS\n");
   printf("    charger state: %s\n", dds_charger_state_topic.c_str());
-  printf("    mode request: %s\n", dds_mode_request_topic.c_str());
+  printf("    charger request: %s\n", dds_charger_request_topic.c_str());
 }
 
 ServerConfig ServerNodeConfig::get_server_config() const
@@ -48,7 +48,7 @@ ServerConfig ServerNodeConfig::get_server_config() const
   ServerConfig server_config;
   server_config.dds_domain = dds_domain;
   server_config.dds_charger_state_topic = dds_charger_state_topic;
-  server_config.dds_mode_request_topic = dds_mode_request_topic;
+  server_config.dds_charger_request_topic = dds_charger_request_topic;
   return server_config;
 }
 

@@ -39,12 +39,11 @@ ClientNode::ClientNode(const rclcpp::NodeOptions & options)
   // parameter declarations
   declare_parameter("fleet_name", client_node_config.fleet_name);
   declare_parameter("charger_name", client_node_config.charger_name);
-  declare_parameter("charger_model", client_node_config.charger_model);
   // defaults declared in header
-  declare_parameter("charger_mode_topic", client_node_config.charger_mode_topic);
+  declare_parameter("charger_state_topic", client_node_config.charger_state_topic);
   declare_parameter("charging_trigger_server_name", client_node_config.charging_trigger_server_name);
   declare_parameter("dds_domain", client_node_config.dds_domain);
-  declare_parameter("dds_mode_request_topic", client_node_config.dds_mode_request_topic);
+  declare_parameter("dds_charger_request_topic", client_node_config.dds_charger_request_topic);
   declare_parameter("wait_timeout", client_node_config.wait_timeout);
   declare_parameter("update_frequency", client_node_config.update_frequency);
   declare_parameter("publish_frequency", client_node_config.publish_frequency);
@@ -52,11 +51,10 @@ ClientNode::ClientNode(const rclcpp::NodeOptions & options)
   // getting new values for parameters or keep defaults
   get_parameter("fleet_name", client_node_config.fleet_name);
   get_parameter("charger_name", client_node_config.charger_name);
-  get_parameter("charger_model", client_node_config.charger_model);
-  get_parameter("charger_mode_topic", client_node_config.charger_mode_topic);
+  get_parameter("charger_state_topic", client_node_config.charger_state_topic);
   get_parameter("charging_trigger_server_name", client_node_config.charging_trigger_server_name);
   get_parameter("dds_domain", client_node_config.dds_domain);
-  get_parameter("dds_mode_request_topic", client_node_config.dds_mode_request_topic);
+  get_parameter("dds_charger_request_topic", client_node_config.dds_charger_request_topic);
   get_parameter("wait_timeout", client_node_config.wait_timeout);
   get_parameter("update_frequency", client_node_config.update_frequency);
   get_parameter("publish_frequency", client_node_config.publish_frequency);
@@ -103,8 +101,8 @@ void ClientNode::start(Fields _fields)
 {
   fields = std::move(_fields);
 
-  charger_mode_sub = create_subscription<charger_fleet_msgs::msg::ChargerMode>(
-    client_node_config.charger_mode_topic, rclcpp::SensorDataQoS().keep_last(1),
+  charger_state_sub = create_subscription<charger_fleet_msgs::msg::ChargerState>(
+    client_node_config.charger_state_topic, rclcpp::SensorDataQoS().keep_last(1),
     std::bind(&ClientNode::charger_state_callback_fn, this, std::placeholders::_1));
 
   request_error = false;
@@ -126,63 +124,77 @@ void ClientNode::print_config()
 }
 
 void ClientNode::charger_state_callback_fn(
-  const charger_fleet_msgs::msg::ChargerMode::SharedPtr _msg)
+  const charger_fleet_msgs::msg::ChargerState::SharedPtr _msg)
 {
   WriteLock charger_state_lock(charger_state_mutex);
   current_charger_state = *_msg;
 }
 
 
-messages::ChargerMode ClientNode::get_charger_mode()
+messages::ChargerState ClientNode::get_charger_state()
 {
+  messages::ChargerState chargerState;
+
   /// Checks if charger has just received a request that causes an adapter error
   if (request_error) {
-    return messages::ChargerMode{messages::ChargerMode::MODE_REQUEST_ERROR};
-  }
-
+    chargerState.state = messages::ChargerState::CHARGER_ERROR;
+    chargerState.error_message = "Request lasted was error!";
+    // return messages::ChargerState{messages::ChargerState::CHARGER_ERROR};
+  } else {
   /// Checks if charger is charging
-  {
+  
     ReadLock charger_state_lock(charger_state_mutex);
-
-    if (current_charger_state.mode ==
-      current_charger_state.MODE_IDLE)
-    {
-      return messages::ChargerMode{messages::ChargerMode::MODE_IDLE};
-    } else if (current_charger_state.mode ==
-             current_charger_state.MODE_CHARGING)
-    {
-      return messages::ChargerMode{messages::ChargerMode::MODE_CHARGING};
-    }  else if (current_charger_state.mode ==
-             current_charger_state.MODE_CHARGEFULL)
-    {
-      return messages::ChargerMode{messages::ChargerMode::MODE_CHARGEFULL};
-    }  else if (current_charger_state.mode ==
-             current_charger_state.MODE_ERROR)
-    {
-      return messages::ChargerMode{messages::ChargerMode::MODE_ERROR};
-    }  else if (current_charger_state.mode ==
-             current_charger_state.MODE_REQUEST_ERROR)
-    {
-      return messages::ChargerMode{messages::ChargerMode::MODE_REQUEST_ERROR};
-    }
-    
+    // if (current_charger_state.state ==
+    //   current_charger_state.CHARGER_IDLE)
+    // {
+    //   chargerState.state = messages::ChargerState::CHARGER_IDLE;
+    // } else if (current_charger_state.state ==
+    //          current_charger_state.CHARGER_ASSIGNED)
+    // {
+    //   chargerState.state = messages::ChargerState::CHARGER_ASSIGNED;
+    // }  else if (current_charger_state.state ==
+    //          current_charger_state.CHARGER_CHARGING)
+    // {
+    //   chargerState.state = messages::ChargerState::CHARGER_CHARGING;
+    // }  else if (current_charger_state.state ==
+    //          current_charger_state.CHARGER_RELEASED)
+    // {
+    //   chargerState.state = messages::ChargerState::CHARGER_RELEASED;
+    // }  else if (current_charger_state.state ==
+    //          current_charger_state.CHARGER_ERROR)
+    // {
+    //   chargerState.state = messages::ChargerState::CHARGER_ERROR;
+    //   chargerState.error_message = current_charger_state.error_message;
+    // }
+    chargerState.state = current_charger_state.state;
+    chargerState.error_message = current_charger_state.error_message;
   }
 
-  return messages::ChargerMode{messages::ChargerMode::MODE_IDLE};
+  // return messages::ChargerState{messages::ChargerState::CHARGER_IDLE};
+  return chargerState;
 }
 
 void ClientNode::publish_charger_state()
 {
   messages::ChargerState new_charger_state;
-  new_charger_state.name = client_node_config.charger_name;
-  new_charger_state.model = client_node_config.charger_model;
+  new_charger_state.fleet_name = client_node_config.fleet_name;
+  new_charger_state.charger_name = client_node_config.charger_name;
 
   {
-    ReadLock task_id_lock(task_id_mutex);
-    new_charger_state.task_id = current_task_id;
+    ReadLock request_id_lock(request_id_mutex);
+    new_charger_state.request_id = current_request_id;
   }
 
-  new_charger_state.mode = get_charger_mode();
+  {
+    ReadLock request_robot_lock(request_robot_mutex);
+    new_charger_state.robot_name = current_request_robot_name;
+  }
+
+  charger_fleet::messages::ChargerState chargerState;
+  chargerState = get_charger_state();
+
+  new_charger_state.state = chargerState.state;
+  new_charger_state.error_message = chargerState.error_message;
 
   if (!fields.client->send_charger_state(new_charger_state)) {
     RCLCPP_WARN(get_logger(), "failed to send charger state");
@@ -192,10 +204,10 @@ void ClientNode::publish_charger_state()
 bool ClientNode::is_valid_request(
   const std::string & _request_fleet_name,
   const std::string & _request_charger_name,
-  const std::string & _request_task_id)
+  const std::string & _request_id)
 {
-  ReadLock task_id_lock(task_id_mutex);
-  if (current_task_id == _request_task_id ||
+  ReadLock request_id_lock(request_id_mutex);
+  if (current_request_id == _request_id ||
     client_node_config.charger_name != _request_charger_name ||
     client_node_config.fleet_name != _request_fleet_name)
   {
@@ -204,21 +216,30 @@ bool ClientNode::is_valid_request(
   return true;
 }
 
-bool ClientNode::read_mode_request()
+bool ClientNode::read_charger_request()
 {
-  messages::ModeRequest mode_request;
-  if (fields.client->read_mode_request(mode_request) &&
+  messages::ChargerRequest charger_request;
+  if (fields.client->read_charger_request(charger_request) &&
       is_valid_request(
-          mode_request.fleet_name, mode_request.charger_name,
-          mode_request.task_id))
+          charger_request.fleet_name,
+          charger_request.charger_name,
+          charger_request.request_id))
   {
-    if ((mode_request.mode.mode == messages::ChargeMode::MODE_CHARGE) ||
-        (mode_request.mode.mode == messages::ChargeMode::MODE_UNCHARGE) )
+    if ((charger_request.charger_mode.mode == messages::ChargerMode::MODE_CHARGE) ||
+        (charger_request.charger_mode.mode == messages::ChargerMode::MODE_UNCHARGE) )
     {
-      if (mode_request.mode.mode == messages::ChargeMode::MODE_CHARGE) {
+      if (charger_request.charger_mode.mode == messages::ChargerMode::MODE_CHARGE) {
         RCLCPP_INFO(get_logger(), "received a CHARGE command.");
+        {
+          WriteLock request_robot_lock(request_robot_mutex);
+          current_request_robot_name = charger_request.robot_name;
+        }
       } else {
         RCLCPP_INFO(get_logger(), "received a UNCHARGE command.");
+        {
+          WriteLock request_robot_lock(request_robot_mutex);
+          current_request_robot_name = "";
+        }
       }
       
       if (fields.charging_trigger_client &&
@@ -230,7 +251,7 @@ bool ClientNode::read_mode_request()
           auto response = future.get();
           if (!response->success)
           {
-            RCLCPP_ERROR(get_logger(), "Failed to request mode, message: %s!",
+            RCLCPP_ERROR(get_logger(), "Failed to request charger, message: %s!",
               response->message.c_str());
             request_error = true;
           } else {
@@ -238,7 +259,7 @@ bool ClientNode::read_mode_request()
           }
         };
         auto charge_srv = std::make_shared<charger_fleet_msgs::srv::Charger::Request>();
-        charge_srv->mode = mode_request.mode.mode;
+        charge_srv->mode = charger_request.charger_mode.mode;
 
         // sync call would block indefinelty as we are in a spinning node
         fields.charging_trigger_client->async_send_request(charge_srv, response_received_callback);
@@ -246,12 +267,12 @@ bool ClientNode::read_mode_request()
 
     } else {
       RCLCPP_ERROR(get_logger(), "received an INVALID/UNSUPPORTED command: %d.",
-              mode_request.mode.mode);
+              charger_request.charger_mode.mode);
       request_error = true;
     }
     
-    WriteLock task_id_lock(task_id_mutex);
-    current_task_id = mode_request.task_id;
+    WriteLock request_id_lock(request_id_mutex);
+    current_request_id = charger_request.request_id;
 
     return true;
   }
@@ -260,7 +281,7 @@ bool ClientNode::read_mode_request()
 
 void ClientNode::read_requests()
 {
-  if (read_mode_request())
+  if (read_charger_request())
   {
     return;
   }

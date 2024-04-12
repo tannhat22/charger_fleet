@@ -26,11 +26,8 @@ namespace messages {
 struct ChargerMode
 {
   uint32_t mode;
-  static const uint32_t MODE_IDLE = 0;
-  static const uint32_t MODE_CHARGING = 1;
-  static const uint32_t MODE_CHARGEFULL = 2;
-  static const uint32_t MODE_ERROR = 3;
-  static const uint32_t MODE_REQUEST_ERROR = 4;
+  static const uint32_t MODE_CHARGE = 1;
+  static const uint32_t MODE_UNCHARGE = 2;
 };
 
 } // namespace messages

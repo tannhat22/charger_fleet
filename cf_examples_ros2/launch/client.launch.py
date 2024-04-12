@@ -37,12 +37,11 @@ def generate_launch_description():
                 {
                     'fleet_name': 'amr_vdm',
                     'charger_name': 'charger001',
-                    'charger_model': 'chargerver1',
-                    'charger_mode_topic': '/charger_mode',
-                    'charging_trigger_server_name': '/charger_work',
+                    'charger_state_topic': '/charger_state',
+                    'charging_trigger_server_name': '/charger_server',
                     'dds_domain': 52,
                     'dds_state_topic': 'charger_state',
-                    'dds_mode_request_topic': 'mode_charger_request',
+                    'dds_charger_request_topic': 'charger_request',
                     'update_frequency': 5.0,
                     'publish_frequency': 1.0,
                 }

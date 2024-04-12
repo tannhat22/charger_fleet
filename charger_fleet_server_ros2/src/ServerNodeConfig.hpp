@@ -31,11 +31,11 @@ struct ServerNodeConfig
   std::string fleet_name = "fleet_name";
 
   std::string fleet_state_topic = "fleet_charger_state";
-  std::string mode_request_topic = "mode_charger_request";
+  std::string charger_request_topic = "charger_request";
 
   int dds_domain = 52;
   std::string dds_charger_state_topic = "fleet_charger_state";
-  std::string dds_mode_request_topic = "mode_charger_request";
+  std::string dds_charger_request_topic = "charger_request";
 
   double update_state_frequency = 10.0;
   double publish_state_frequency = 1.0;

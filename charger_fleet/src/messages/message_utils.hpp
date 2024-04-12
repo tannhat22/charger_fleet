@@ -19,9 +19,8 @@
 #define CHARGER_FLEET__SRC__MESSAGES__MESSAGE_UTILS_HPP
 
 #include <charger_fleet/messages/ChargerMode.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 #include <charger_fleet/messages/ChargerState.hpp>
-#include <charger_fleet/messages/ChargeMode.hpp>
-#include <charger_fleet/messages/ModeRequest.hpp>
 
 #include "FleetMessages.h"
 
@@ -32,17 +31,13 @@ void convert(const ChargerMode& _input, ChargerFleetData_ChargerMode& _output);
 
 void convert(const ChargerFleetData_ChargerMode& _input, ChargerMode& _output);
 
+void convert(const ChargerRequest& _input, ChargerFleetData_ChargerRequest& _output);
+
+void convert(const ChargerFleetData_ChargerRequest& _input, ChargerRequest& _output);
+
 void convert(const ChargerState& _input, ChargerFleetData_ChargerState& _output);
 
 void convert(const ChargerFleetData_ChargerState& _input, ChargerState& _output);
-
-void convert(const ChargeMode& _input, ChargerFleetData_ChargeMode& _output);
-
-void convert(const ChargerFleetData_ChargeMode& _input, ChargeMode& _output);
-
-void convert(const ModeRequest& _input, ChargerFleetData_ModeRequest& _output);
-
-void convert(const ChargerFleetData_ModeRequest& _input, ModeRequest& _output);
 
 } // namespace 
 } // namespace charger_fleet

@@ -17,27 +17,13 @@
 extern "C" {
 #endif
 
-#define ChargerFleetData_ChargeMode_Constants_MODE_CHARGE 1
-#define ChargerFleetData_ChargeMode_Constants_MODE_UNCHARGE 2
-#define ChargerFleetData_ChargerMode_Constants_MODE_IDLE 0
-#define ChargerFleetData_ChargerMode_Constants_MODE_CHARGING 1
-#define ChargerFleetData_ChargerMode_Constants_MODE_CHARGEFULL 2
-#define ChargerFleetData_ChargerMode_Constants_MODE_ERROR 3
-#define ChargerFleetData_ChargerMode_Constants_MODE_REQUEST_ERROR 4
-
-
-typedef struct ChargerFleetData_ChargeMode
-{
-  uint32_t mode;
-} ChargerFleetData_ChargeMode;
-
-extern const dds_topic_descriptor_t ChargerFleetData_ChargeMode_desc;
-
-#define ChargerFleetData_ChargeMode__alloc() \
-((ChargerFleetData_ChargeMode*) dds_alloc (sizeof (ChargerFleetData_ChargeMode)));
-
-#define ChargerFleetData_ChargeMode_free(d,o) \
-dds_sample_free ((d), &ChargerFleetData_ChargeMode_desc, (o))
+#define ChargerFleetData_ChargerMode_Constants_MODE_CHARGE 1
+#define ChargerFleetData_ChargerMode_Constants_MODE_UNCHARGE 2
+#define ChargerFleetData_ChargerState_Constants_CHARGER_IDLE 1
+#define ChargerFleetData_ChargerState_Constants_CHARGER_ASSIGNED 2
+#define ChargerFleetData_ChargerState_Constants_CHARGER_CHARGING 3
+#define ChargerFleetData_ChargerState_Constants_CHARGER_RELEASED 4
+#define ChargerFleetData_ChargerState_Constants_CHARGER_ERROR 200
 
 
 typedef struct ChargerFleetData_ChargerMode
@@ -54,12 +40,32 @@ extern const dds_topic_descriptor_t ChargerFleetData_ChargerMode_desc;
 dds_sample_free ((d), &ChargerFleetData_ChargerMode_desc, (o))
 
 
+typedef struct ChargerFleetData_ChargerRequest
+{
+  char * charger_name;
+  char * fleet_name;
+  char * robot_name;
+  char * request_id;
+  ChargerFleetData_ChargerMode charger_mode;
+} ChargerFleetData_ChargerRequest;
+
+extern const dds_topic_descriptor_t ChargerFleetData_ChargerRequest_desc;
+
+#define ChargerFleetData_ChargerRequest__alloc() \
+((ChargerFleetData_ChargerRequest*) dds_alloc (sizeof (ChargerFleetData_ChargerRequest)));
+
+#define ChargerFleetData_ChargerRequest_free(d,o) \
+dds_sample_free ((d), &ChargerFleetData_ChargerRequest_desc, (o))
+
+
 typedef struct ChargerFleetData_ChargerState
 {
-  char * name;
-  char * model;
-  char * task_id;
-  ChargerFleetData_ChargerMode mode;
+  uint32_t state;
+  char * charger_name;
+  char * error_message;
+  char * request_id;
+  char * fleet_name;
+  char * robot_name;
 } ChargerFleetData_ChargerState;
 
 extern const dds_topic_descriptor_t ChargerFleetData_ChargerState_desc;
@@ -69,23 +75,6 @@ extern const dds_topic_descriptor_t ChargerFleetData_ChargerState_desc;
 
 #define ChargerFleetData_ChargerState_free(d,o) \
 dds_sample_free ((d), &ChargerFleetData_ChargerState_desc, (o))
-
-
-typedef struct ChargerFleetData_ModeRequest
-{
-  char * fleet_name;
-  char * charger_name;
-  ChargerFleetData_ChargeMode mode;
-  char * task_id;
-} ChargerFleetData_ModeRequest;
-
-extern const dds_topic_descriptor_t ChargerFleetData_ModeRequest_desc;
-
-#define ChargerFleetData_ModeRequest__alloc() \
-((ChargerFleetData_ModeRequest*) dds_alloc (sizeof (ChargerFleetData_ModeRequest)));
-
-#define ChargerFleetData_ModeRequest_free(d,o) \
-dds_sample_free ((d), &ChargerFleetData_ModeRequest_desc, (o))
 
 #ifdef __cplusplus
 }

@@ -23,23 +23,26 @@ namespace ros2
 {
 
 void to_cf_message(
-    const charger_fleet_msgs::msg::ModeRequest& _in_msg, 
-    messages::ModeRequest& _out_msg)
+    const charger_fleet_msgs::msg::ChargerRequest& _in_msg, 
+    messages::ChargerRequest& _out_msg)
 {
-  _out_msg.fleet_name = _in_msg.fleet_name;
   _out_msg.charger_name = _in_msg.charger_name;
-  _out_msg.mode.mode = _in_msg.mode.mode;
-  _out_msg.task_id = _in_msg.task_id;
+  _out_msg.fleet_name = _in_msg.fleet_name;
+  _out_msg.robot_name = _in_msg.robot_name;
+  _out_msg.request_id = _in_msg.request_id;
+  _out_msg.charger_mode.mode = _in_msg.charger_mode.mode;
 }
 
 void to_ros_message(
     const messages::ChargerState& _in_msg,
     charger_fleet_msgs::msg::ChargerState& _out_msg)
 {
-  _out_msg.name = _in_msg.name;
-  _out_msg.model = _in_msg.model;
-  _out_msg.task_id = _in_msg.task_id;
-  _out_msg.mode.mode = _in_msg.mode.mode;
+  _out_msg.state = _in_msg.state;
+  _out_msg.charger_name = _in_msg.charger_name;
+  _out_msg.error_message = _in_msg.error_message;
+  _out_msg.request_id = _in_msg.request_id;
+  _out_msg.fleet_name = _in_msg.fleet_name;
+  _out_msg.robot_name = _in_msg.robot_name;
 }
 
 } // namespace ros2

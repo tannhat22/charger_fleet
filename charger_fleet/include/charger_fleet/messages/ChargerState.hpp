@@ -28,10 +28,20 @@ namespace messages {
 
 struct ChargerState
 {
-  std::string name;
-  std::string model;
-  std::string task_id;
-  ChargerMode mode;
+  static const uint32_t CHARGER_IDLE = 1;
+  static const uint32_t CHARGER_ASSIGNED = 2;
+  static const uint32_t CHARGER_CHARGING = 3;
+  static const uint32_t CHARGER_RELEASED = 4;
+  static const uint32_t CHARGER_ERROR = 200;
+
+  uint32_t state;
+  std::string charger_name;
+  std::string error_message;
+  std::string request_id;
+  
+  std::string fleet_name;
+  std::string robot_name;
+
 };
 
 } // namespace messages

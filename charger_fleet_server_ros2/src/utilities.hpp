@@ -19,10 +19,10 @@
 #define CHARGER_FLEET_SERVER_ROS2__SRC__UTILITIES_HPP
 
 #include <charger_fleet_msgs/msg/charger_state.hpp>
-#include <charger_fleet_msgs/msg/mode_request.hpp>
+#include <charger_fleet_msgs/msg/charger_request.hpp>
 
 #include <charger_fleet/messages/ChargerState.hpp>
-#include <charger_fleet/messages/ModeRequest.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 
 namespace charger_fleet
 {
@@ -30,8 +30,8 @@ namespace ros2
 {
 
 void to_cf_message(
-    const charger_fleet_msgs::msg::ModeRequest& in_msg, 
-    messages::ModeRequest& out_msg);
+    const charger_fleet_msgs::msg::ChargerRequest& in_msg, 
+    messages::ChargerRequest& out_msg);
 
 // ----------------------------------------------------------------------------
 

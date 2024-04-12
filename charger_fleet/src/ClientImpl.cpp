@@ -48,13 +48,13 @@ bool Client::ClientImpl::send_charger_state(
   return sent;
 }
 
-bool Client::ClientImpl::read_mode_request
-    (messages::ModeRequest& _mode_request)
+bool Client::ClientImpl::read_charger_request
+    (messages::ChargerRequest& _charger_request)
 {
-  auto mode_requests = fields.mode_request_sub->read();
-  if (!mode_requests.empty())
+  auto charger_requests = fields.charger_request_sub->read();
+  if (!charger_requests.empty())
   {
-    convert(*(mode_requests[0]), _mode_request);
+    convert(*(charger_requests[0]), _charger_request);
     return true;
   }
   return false;

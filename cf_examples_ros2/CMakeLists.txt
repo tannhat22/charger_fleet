@@ -16,7 +16,7 @@ if (ament_cmake_FOUND)
     PROGRAMS 
     # scripts/send_cancel_request.py
     # scripts/send_charge_request.py
-    scripts/send_mode_request.py
+    scripts/send_charger_request.py
     DESTINATION lib/${PROJECT_NAME}
   )
 

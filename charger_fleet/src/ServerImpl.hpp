@@ -19,7 +19,7 @@
 #define CHARGER_FLEET__SRC__SERVERIMPL_HPP
 
 #include <charger_fleet/messages/ChargerState.hpp>
-#include <charger_fleet/messages/ModeRequest.hpp>
+#include <charger_fleet/messages/ChargerRequest.hpp>
 #include <charger_fleet/Server.hpp>
 #include <charger_fleet/ServerConfig.hpp>
 
@@ -45,9 +45,9 @@ public:
     dds::DDSSubscribeHandler<ChargerFleetData_ChargerState, 10>::SharedPtr 
         charger_state_sub;
 
-    /// DDS publisher for mode requests to be sent to clients
-    dds::DDSPublishHandler<ChargerFleetData_ModeRequest>::SharedPtr
-        mode_request_pub;
+    /// DDS publisher for charger requests to be sent to clients
+    dds::DDSPublishHandler<ChargerFleetData_ChargerRequest>::SharedPtr
+        charger_request_pub;
   };
 
   ServerImpl(const ServerConfig& config);
@@ -58,7 +58,7 @@ public:
 
   bool read_charger_states(std::vector<messages::ChargerState>& new_charger_states);
 
-  bool send_mode_request(const messages::ModeRequest& mode_request);
+  bool send_charger_request(const messages::ChargerRequest& charger_request);
 
 private:
 

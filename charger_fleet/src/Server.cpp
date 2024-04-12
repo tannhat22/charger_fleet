@@ -44,20 +44,20 @@ Server::SharedPtr Server::make(const ServerConfig& _config)
           participant, &ChargerFleetData_ChargerState_desc,
           _config.dds_charger_state_topic));
 
-  dds::DDSPublishHandler<ChargerFleetData_ModeRequest>::SharedPtr 
-      mode_request_pub(
-          new dds::DDSPublishHandler<ChargerFleetData_ModeRequest>(
-              participant, &ChargerFleetData_ModeRequest_desc,
-              _config.dds_mode_request_topic));
+  dds::DDSPublishHandler<ChargerFleetData_ChargerRequest>::SharedPtr 
+      charger_request_pub(
+          new dds::DDSPublishHandler<ChargerFleetData_ChargerRequest>(
+              participant, &ChargerFleetData_ChargerRequest_desc,
+              _config.dds_charger_request_topic));
 
   if (!state_sub->is_ready() ||
-      !mode_request_pub->is_ready())
+      !charger_request_pub->is_ready())
     return nullptr;
 
   server->impl->start(ServerImpl::Fields{
       std::move(participant),
       std::move(state_sub),
-      std::move(mode_request_pub)});
+      std::move(charger_request_pub)});
   return server;
 }
 
@@ -75,9 +75,9 @@ bool Server::read_charger_states(
   return impl->read_charger_states(_new_charger_states);
 }
 
-bool Server::send_mode_request(const messages::ModeRequest& _mode_request)
+bool Server::send_charger_request(const messages::ChargerRequest& _charger_request)
 {
-  return impl->send_mode_request(_mode_request);
+  return impl->send_charger_request(_charger_request);
 }
 
 } // namespace charger_fleet

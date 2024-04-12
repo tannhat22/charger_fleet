@@ -29,18 +29,16 @@ void ClientNodeConfig::print_config() const
   printf("ROS 2 CLIENT CONFIGURATION\n");
   printf("  fleet name: %s\n", fleet_name.c_str());
   printf("  charger name: %s\n", charger_name.c_str());
-  printf("  charger model: %s\n", charger_model.c_str());
   printf("  wait timeout: %.1f\n", wait_timeout);
   printf("  update request frequency: %.1f\n", update_frequency);
   printf("  publish state frequency: %.1f\n", publish_frequency);
   printf("  TOPICS\n");
-  printf("    charger mode topic: %s\n", charger_mode_topic.c_str());
   printf("    charging trigger server: %s\n", charging_trigger_server_name.c_str());
   printf("CLIENT-SERVER DDS CONFIGURATION\n");
   printf("  dds domain: %d\n", dds_domain);
   printf("  TOPICS\n");
   printf("    charger state: %s\n", dds_state_topic.c_str());
-  printf("    mode request: %s\n", dds_mode_request_topic.c_str());
+  printf("    charger request: %s\n", dds_charger_request_topic.c_str());
 }
   
 ClientConfig ClientNodeConfig::get_client_config() const
@@ -48,7 +46,7 @@ ClientConfig ClientNodeConfig::get_client_config() const
   ClientConfig client_config;
   client_config.dds_domain = dds_domain;
   client_config.dds_state_topic = dds_state_topic;
-  client_config.dds_mode_request_topic = dds_mode_request_topic;
+  client_config.dds_charger_request_topic = dds_charger_request_topic;
   return client_config;
 }
 

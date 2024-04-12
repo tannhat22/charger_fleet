@@ -26,7 +26,7 @@ struct ClientConfig
 {
   int dds_domain = 52;
   std::string dds_state_topic = "charger_state";
-  std::string dds_mode_request_topic = "mode_request";
+  std::string dds_charger_request_topic = "charger_request";
 
   void print_config() const;
 };

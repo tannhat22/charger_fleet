@@ -29,7 +29,7 @@
 
 #include <charger_fleet_msgs/msg/charger_state.hpp>
 #include <charger_fleet_msgs/msg/fleet_charger_state.hpp>
-#include <charger_fleet_msgs/msg/mode_request.hpp>
+#include <charger_fleet_msgs/msg/charger_request.hpp>
 
 #include <charger_fleet/Server.hpp>
 #include <charger_fleet/messages/ChargerState.hpp>
@@ -73,10 +73,10 @@ private:
 
   // --------------------------------------------------------------------------
 
-  rclcpp::Subscription<charger_fleet_msgs::msg::ModeRequest>::SharedPtr
-      mode_request_sub;
+  rclcpp::Subscription<charger_fleet_msgs::msg::ChargerRequest>::SharedPtr
+      charger_request_sub;
 
-  void handle_mode_request(charger_fleet_msgs::msg::ModeRequest::UniquePtr msg);
+  void handle_charger_request(charger_fleet_msgs::msg::ChargerRequest::UniquePtr msg);
 
   // --------------------------------------------------------------------------
 

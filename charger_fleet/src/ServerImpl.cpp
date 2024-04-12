@@ -56,13 +56,13 @@ bool Server::ServerImpl::read_charger_states(
   return false;
 }
 
-bool Server::ServerImpl::send_mode_request(
-    const messages::ModeRequest& _mode_request)
+bool Server::ServerImpl::send_charger_request(
+    const messages::ChargerRequest& _charger_request)
 {
-  ChargerFleetData_ModeRequest* new_mr = ChargerFleetData_ModeRequest__alloc();
-  convert(_mode_request, *new_mr);
-  bool sent = fields.mode_request_pub->write(new_mr);
-  ChargerFleetData_ModeRequest_free(new_mr, DDS_FREE_ALL);
+  ChargerFleetData_ChargerRequest* new_mr = ChargerFleetData_ChargerRequest__alloc();
+  convert(_charger_request, *new_mr);
+  bool sent = fields.charger_request_pub->write(new_mr);
+  ChargerFleetData_ChargerRequest_free(new_mr, DDS_FREE_ALL);
   return sent;
 }
 

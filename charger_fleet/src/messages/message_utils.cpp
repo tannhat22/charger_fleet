@@ -38,47 +38,44 @@ void convert(const ChargerFleetData_ChargerMode& _input, ChargerMode& _output)
   _output.mode = _input.mode;
 }
 
+void convert(const ChargerRequest& _input, ChargerFleetData_ChargerRequest& _output)
+{
+  _output.charger_name = common::dds_string_alloc_and_copy(_input.charger_name);
+  _output.fleet_name = common::dds_string_alloc_and_copy(_input.fleet_name);
+  _output.robot_name = common::dds_string_alloc_and_copy(_input.robot_name);
+  _output.request_id = common::dds_string_alloc_and_copy(_input.request_id);
+  convert(_input.charger_mode, _output.charger_mode);
+}
+
+void convert(const ChargerFleetData_ChargerRequest& _input, ChargerRequest& _output)
+{
+  _output.charger_name =  std::string(_input.charger_name);
+  _output.fleet_name = std::string(_input.fleet_name);
+  _output.robot_name = std::string(_input.robot_name);
+  _output.request_id = std::string(_input.request_id);
+  convert(_input.charger_mode, _output.charger_mode);
+}
+
 void convert(const ChargerState& _input, ChargerFleetData_ChargerState& _output)
 {
-  _output.name = common::dds_string_alloc_and_copy(_input.name);
-  _output.model = common::dds_string_alloc_and_copy(_input.model);
-  _output.task_id = common::dds_string_alloc_and_copy(_input.task_id);
-  convert(_input.mode, _output.mode);
+  _output.state = _input.state;
+  _output.charger_name = common::dds_string_alloc_and_copy(_input.charger_name);
+  _output.error_message = common::dds_string_alloc_and_copy(_input.error_message);
+  _output.request_id = common::dds_string_alloc_and_copy(_input.request_id);
+  _output.fleet_name = common::dds_string_alloc_and_copy(_input.fleet_name);
+  _output.robot_name = common::dds_string_alloc_and_copy(_input.robot_name);
 }
 
 void convert(const ChargerFleetData_ChargerState& _input, ChargerState& _output)
 {
-  _output.name = std::string(_input.name);
-  _output.model = std::string(_input.model);
-  _output.task_id = std::string(_input.task_id);
-  convert(_input.mode, _output.mode);
-}
-
-void convert(const ChargeMode& _input, ChargerFleetData_ChargeMode& _output)
-{
-  _output.mode = _input.mode;
-}
-
-void convert(const ChargerFleetData_ChargeMode& _input, ChargeMode& _output)
-{
-  _output.mode = _input.mode;
-}
-
-void convert(const ModeRequest& _input, ChargerFleetData_ModeRequest& _output)
-{
-  _output.fleet_name = common::dds_string_alloc_and_copy(_input.fleet_name);
-  _output.charger_name = common::dds_string_alloc_and_copy(_input.charger_name);
-  convert(_input.mode, _output.mode);
-  _output.task_id = common::dds_string_alloc_and_copy(_input.task_id);
-}
-
-void convert(const ChargerFleetData_ModeRequest& _input, ModeRequest& _output)
-{
-  _output.fleet_name = std::string(_input.fleet_name);
+  _output.state = _input.state;
   _output.charger_name = std::string(_input.charger_name);
-  convert(_input.mode, _output.mode);
-  _output.task_id = std::string(_input.task_id);
+  _output.error_message = std::string(_input.error_message);
+  _output.request_id = std::string(_input.request_id);
+  _output.fleet_name = std::string(_input.fleet_name);
+  _output.robot_name = std::string(_input.robot_name);
 }
+
 
 } // namespace messages
 } // namespace charger_fleet
