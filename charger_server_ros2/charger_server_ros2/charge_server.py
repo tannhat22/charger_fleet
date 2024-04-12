@@ -215,6 +215,7 @@ def main(args=None):
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
+    charger_service.soc.close()
     charger_service.destroy_node()
     rclpy.shutdown()
 
