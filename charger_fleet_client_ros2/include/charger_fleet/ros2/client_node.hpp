@@ -90,7 +90,7 @@ private:
   bool is_valid_request(
       const std::string& request_fleet_name,
       const std::string& request_charger_name,
-      const std::string& request_request_id);
+      const std::string& request_id);
 
   Mutex request_id_mutex;
   std::string current_request_id;

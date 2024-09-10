@@ -37,12 +37,13 @@ ClientNode::ClientNode(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(get_logger(), "Greetings from %s", get_name());
 
   // parameter declarations
+  // defaults declared in header
   declare_parameter("fleet_name", client_node_config.fleet_name);
   declare_parameter("charger_name", client_node_config.charger_name);
-  // defaults declared in header
   declare_parameter("charger_state_topic", client_node_config.charger_state_topic);
   declare_parameter("charging_trigger_server_name", client_node_config.charging_trigger_server_name);
   declare_parameter("dds_domain", client_node_config.dds_domain);
+  declare_parameter("dds_state_topic", client_node_config.dds_state_topic);
   declare_parameter("dds_charger_request_topic", client_node_config.dds_charger_request_topic);
   declare_parameter("wait_timeout", client_node_config.wait_timeout);
   declare_parameter("update_frequency", client_node_config.update_frequency);
@@ -54,6 +55,7 @@ ClientNode::ClientNode(const rclcpp::NodeOptions & options)
   get_parameter("charger_state_topic", client_node_config.charger_state_topic);
   get_parameter("charging_trigger_server_name", client_node_config.charging_trigger_server_name);
   get_parameter("dds_domain", client_node_config.dds_domain);
+  get_parameter("dds_state_topic", client_node_config.dds_state_topic);
   get_parameter("dds_charger_request_topic", client_node_config.dds_charger_request_topic);
   get_parameter("wait_timeout", client_node_config.wait_timeout);
   get_parameter("update_frequency", client_node_config.update_frequency);
@@ -66,13 +68,13 @@ ClientNode::ClientNode(const rclcpp::NodeOptions & options)
     throw std::runtime_error("Unable to create charger_fleet Client from config.");
   }
 
-  /// Setting up the charging server client, if required, wait for server
+  /// Setting up the charging service client, if required, wait for server
   rclcpp::Client<charger_fleet_msgs::srv::Charger>::SharedPtr charging_trigger_client = nullptr;
   if (client_node_config.charging_trigger_server_name != "") {
     charging_trigger_client = create_client<charger_fleet_msgs::srv::Charger>(
       client_node_config.charging_trigger_server_name);
     RCLCPP_INFO(
-      get_logger(), "waiting for connection with trigger server: %s",
+      get_logger(), "waiting for connection with charging trigger server: %s",
       client_node_config.charging_trigger_server_name.c_str());
     while (!charging_trigger_client->wait_for_service(
         std::chrono::duration<double>(client_node_config.wait_timeout)))
